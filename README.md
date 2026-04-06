@@ -117,7 +117,7 @@ Then use the tools like this:
 
 #### Security notes
 
-This server validates `filePath` (prevents traversal), validates EPUB type (requires `.epub` + ZIP magic bytes), and strips HTML from search snippets.
+This server validates `filePath` (prevents traversal), validates EPUB type (requires `.epub` + ZIP magic bytes), wraps the callback-based EPUB chapter API safely, and strips HTML from search snippets.
 
 #### Environment Variables
 

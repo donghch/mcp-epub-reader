@@ -83,8 +83,8 @@ describe('EPUB parser', () => {
           return mockEpubInstance;
         }),
         parse: jest.fn(),
-        getChapter: jest.fn((chapterId: string) => Promise.resolve(`Processed ${chapterId}: ${mockChapterContent}`)),
-        getChapterRaw: jest.fn((chapterId: string) => Promise.resolve(mockRawContent)),
+        getChapter: jest.fn((chapterId: string, callback: Function) => callback(null, `Processed ${chapterId}: ${mockChapterContent}`)),
+        getChapterRaw: jest.fn((chapterId: string, callback: Function) => callback(null, mockRawContent)),
       };
       mockEPub.mockImplementation(() => mockEpubInstance as any);
 
@@ -148,8 +148,8 @@ describe('EPUB parser', () => {
           return mockEpubInstance;
         }),
         parse: jest.fn(),
-        getChapter: jest.fn(() => Promise.resolve('')),
-        getChapterRaw: jest.fn(() => Promise.resolve('')),
+        getChapter: jest.fn((chapterId: string, callback: Function) => callback(null, '')),
+        getChapterRaw: jest.fn((chapterId: string, callback: Function) => callback(null, '')),
       };
       mockEPub.mockImplementation(() => mockEpubInstance as any);
 
@@ -180,8 +180,8 @@ describe('EPUB parser', () => {
           return mockEpubInstance;
         }),
         parse: jest.fn(),
-        getChapter: jest.fn(),
-        getChapterRaw: jest.fn(),
+        getChapter: jest.fn((chapterId: string, callback: Function) => callback(null, '')),
+        getChapterRaw: jest.fn((chapterId: string, callback: Function) => callback(null, '')),
       };
       mockEPub.mockImplementation(() => mockEpubInstance as any);
 
@@ -250,8 +250,8 @@ describe('EPUB parser', () => {
           return mockEpubInstance;
         }),
         parse: jest.fn(),
-        getChapter: jest.fn(() => Promise.reject(new Error('Chapter missing'))),
-        getChapterRaw: jest.fn(),
+        getChapter: jest.fn((chapterId: string, callback: Function) => callback(new Error('Chapter missing'))),
+        getChapterRaw: jest.fn((chapterId: string, callback: Function) => callback(null, '')),
       };
       mockEPub.mockImplementation(() => mockEpubInstance as any);
 
@@ -275,8 +275,8 @@ describe('EPUB parser', () => {
           return mockEpubInstance;
         }),
         parse: jest.fn(),
-        getChapter: jest.fn(),
-        getChapterRaw: jest.fn(),
+        getChapter: jest.fn((chapterId: string, callback: Function) => callback(null, '')),
+        getChapterRaw: jest.fn((chapterId: string, callback: Function) => callback(null, '')),
       };
       mockEPub.mockImplementation(() => mockEpubInstance as any);
 
@@ -304,8 +304,8 @@ describe('EPUB parser', () => {
           return mockEpubInstance;
         }),
         parse: jest.fn(),
-        getChapter: jest.fn(),
-        getChapterRaw: jest.fn(),
+        getChapter: jest.fn((chapterId: string, callback: Function) => callback(null, '')),
+        getChapterRaw: jest.fn((chapterId: string, callback: Function) => callback(null, '')),
       };
       mockEPub.mockImplementation(() => mockEpubInstance as any);
 
@@ -332,8 +332,8 @@ describe('EPUB parser', () => {
           return mockEpubInstance;
         }),
         parse: jest.fn(),
-        getChapter: jest.fn(),
-        getChapterRaw: jest.fn(),
+        getChapter: jest.fn((chapterId: string, callback: Function) => callback(null, '')),
+        getChapterRaw: jest.fn((chapterId: string, callback: Function) => callback(null, '')),
       };
       mockEPub.mockImplementation(() => mockEpubInstance as any);
 
@@ -361,8 +361,8 @@ describe('EPUB parser', () => {
           return mockEpubInstance;
         }),
         parse: jest.fn(),
-        getChapter: jest.fn(() => Promise.resolve('content')),
-        getChapterRaw: jest.fn(() => Promise.resolve('')),
+        getChapter: jest.fn((chapterId: string, callback: Function) => callback(null, 'content')),
+        getChapterRaw: jest.fn((chapterId: string, callback: Function) => callback(null, '')),
       };
       mockEPub.mockImplementation(() => mockEpubInstance as any);
 

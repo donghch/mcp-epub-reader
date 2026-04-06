@@ -214,6 +214,49 @@ function extractFootnotesFromHtml(rawHtml: string, sourceChapter?: string): Foot
 }
 
 /**
+ * Promisifies a callback-style EPUB chapter reader.
+ *
+ * The `epub` package exposes `getChapter` / `getChapterRaw` as callback APIs,
+ * so we wrap them to use async/await safely without assuming Promise support.
+ */
+function readEpubChapter<T>(
+  reader: (chapterId: string, callback: (error: Error | null, data?: T) => void) => unknown,
+  chapterId: string,
+): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    let settled = false;
+
+    const finish = (error: Error | null, data?: T): void => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      resolve(data as T);
+    };
+
+    try {
+      const maybePromise = reader(chapterId, finish);
+
+      if (maybePromise && typeof (maybePromise as Promise<T>).then === 'function') {
+        (maybePromise as Promise<T>)
+          .then((data) => finish(null, data))
+          .catch((error: unknown) => {
+            finish(error instanceof Error ? error : new Error(String(error)));
+          });
+      }
+    } catch (error: unknown) {
+      finish(error instanceof Error ? error : new Error(String(error)));
+    }
+  });
+}
+
+/**
  * Main EPUB parsing function
  */
 export async function parseEpub(filePath: string, options: ParseOptions = {}): Promise<ParsedEpub> {
@@ -253,8 +296,8 @@ export async function parseEpub(filePath: string, options: ParseOptions = {}): P
           let rawContent: string | undefined;
 
           if (opts.fetchChapterContent) {
-            content = await epubAny.getChapter(flowItem.id);
-            rawContent = await epubAny.getChapterRaw(flowItem.id);
+            content = await readEpubChapter<string>(epubAny.getChapter.bind(epubAny), flowItem.id);
+            rawContent = await readEpubChapter<string>(epubAny.getChapterRaw.bind(epubAny), flowItem.id);
           }
 
           const chapter: Chapter = {

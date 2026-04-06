@@ -75,10 +75,10 @@ The EPUB Reader MCP server is a TypeScript implementation of a Model Context Pro
 **Why**: Predictable behavior, easier testing, thread safety in Node.js event loop.
 
 **Implementation**:
-- EPUB parser returns immutable data structures
-- Paginator uses functional transformations
-- Tool handlers are pure relative to their dependencies
-- BookManager manages mutable session state but with thread-safe access
+ - EPUB parser returns immutable data structures
+ - Paginator uses functional transformations
+ - Tool handlers are pure relative to their dependencies
+ - BookManager manages mutable session state but with thread-safe access
 
 ### 2. Dependency Injection (DI)
 
@@ -107,7 +107,16 @@ The EPUB Reader MCP server is a TypeScript implementation of a Model Context Pro
 - Each entry includes `level`, `title`, `pageNumber`, and `children[]`
 - Supports multi-level navigation (parts → chapters → sections)
 
-### 5. Configurable Pagination
+### 5. Callback-Safe EPUB Integration
+
+**Why**: The `epub` library exposes chapter extraction through callback-style APIs, and wrapping them explicitly prevents protocol/runtime mismatches.
+
+**Implementation**:
+- `parseEpub()` wraps `getChapter()` and `getChapterRaw()` in Promise helpers
+- Chapter extraction remains async/await-friendly without relying on implicit Promise support
+- Failures are surfaced as parser errors instead of crashing the server
+
+### 6. Configurable Pagination
 
 **Why**: Different EPUBs have different content densities; fixed page sizes don't work well.
 
@@ -116,7 +125,7 @@ The EPUB Reader MCP server is a TypeScript implementation of a Model Context Pro
 - Respects paragraph boundaries (doesn't split mid-paragraph)
 - Configurable via `wordsPerPage` parameter for future extensibility
 
-### 6. Session-Based Architecture
+### 7. Session-Based Architecture
 
 **Why**: Multiple EPUB files may be open simultaneously; sessions isolate state.
 
