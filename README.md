@@ -4,11 +4,11 @@
 [![MCP Version](https://img.shields.io/badge/MCP-2025--11--25-blue)](https://modelcontextprotocol.io/specification)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20-green)](https://nodejs.org/)
 
-> A Model Context Protocol (MCP) server that acts as a "Kindle for AI agents," exposing EPUB file content through MCP's Tools API.
+> A Model Context Protocol (MCP) server that acts as a "Kindle for AI agents," exposing EPUB file content through standard MCP protocol operations and the Tools API.
 
 ## Overview
 
-The EPUB Reader MCP server provides AI agents with the ability to read and navigate EPUB files. It implements the Model Context Protocol (MCP) to expose 13 tools that enable opening EPUB files, navigating through table of contents and pages, searching content, checking footnotes, and managing reading sessions.
+The EPUB Reader MCP server provides AI agents with the ability to read and navigate EPUB files. It implements the Model Context Protocol (MCP) to expose 13 tools, and now follows the standard MCP handshake/discovery flow so clients like OpenClaw can initialize, list tools, and call them normally.
 
 ### Features
 
@@ -50,13 +50,13 @@ For integration with OpenClaw or other MCP clients:
 node build/index.js
 ```
 
-The server communicates via stdin/stdout using the MCP JSON-RPC protocol.
+The server communicates via stdin/stdout using the MCP JSON-RPC protocol and supports standard MCP operations like initialization, `tools/list`, `tools/call`, and `ping`.
 
 ### Configuration
 
 #### OpenClaw Quick Start (recommended)
 
-OpenClaw can connect to MCP servers over **stdio**. Add this server in OpenClaw’s MCP settings (exact location may vary).
+OpenClaw can connect to MCP servers over **stdio**. Add this server in OpenClaw’s MCP settings (exact location may vary). Tool discovery now works through standard MCP `tools/list`, so no custom wiring is needed.
 
 **Example (stdio):**
 
@@ -126,6 +126,8 @@ This server validates `filePath` (prevents traversal), validates EPUB type (requ
 | `LOG_LEVEL` | Logging level (`error`, `warn`, `info`, `debug`) | No | `info` |
 
 ## Tools Reference
+
+Tools are published through MCP discovery, so clients can enumerate them automatically before calling them.
 
 The server provides 13 tools for EPUB file interaction:
 

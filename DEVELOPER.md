@@ -5,7 +5,7 @@
 
 ## Overview
 
-The EPUB Reader MCP server is a TypeScript implementation of a Model Context Protocol (MCP) server that provides EPUB file reading capabilities to AI agents. It acts as a "Kindle for AI agents," exposing EPUB content through MCP's Tools API.
+The EPUB Reader MCP server is a TypeScript implementation of a Model Context Protocol (MCP) server that provides EPUB file reading capabilities to AI agents. It acts as a "Kindle for AI agents," exposing EPUB content through standard MCP protocol operations and the Tools API.
 
 ### Design Goals
 
@@ -28,8 +28,9 @@ The EPUB Reader MCP server is a TypeScript implementation of a Model Context Pro
 ┌──────────────────────────────▼──────────────────────────────┐
 │                    MCP Server (Node.js)                     │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │               Tool Registration Layer                 │  │
-│  │  • Routes requests to appropriate tool handlers      │  │
+│  │               Tool Registry / Protocol Layer         │  │
+│  │  • Publishes tool metadata for MCP discovery         │  │
+│  │  • Routes standard MCP tool requests                 │  │
 │  │  • Validates input using Zod schemas                 │  │
 │  │  • Converts errors to MCP error responses            │  │
 │  └──────────────┬───────────────────────────────────────┘  │
@@ -59,12 +60,13 @@ The EPUB Reader MCP server is a TypeScript implementation of a Model Context Pro
 
 ### Data Flow
 
-1. **Request Reception**: MCP server receives JSON-RPC `tools/call` request via stdio
-2. **Routing**: Tool registration layer identifies tool by name (`ebook/open`, etc.)
-3. **Validation**: Input validated against Zod schema, errors returned if invalid
-4. **Execution**: Tool handler executes business logic using BookManager
-5. **Response**: Result converted to MCP tool result format, sent via stdout
-6. **Error Handling**: Any thrown errors caught and converted to MCP error responses
+1. **Handshake**: MCP client initializes over stdio; the SDK handles `initialize` / `initialized`
+2. **Discovery**: `tools/list` returns the registry of available EPUB tools
+3. **Routing**: `tools/call` resolves the requested tool name (`ebook/open`, etc.)
+4. **Validation**: Input validated against Zod schema, errors returned if invalid
+5. **Execution**: Tool handler executes business logic using BookManager
+6. **Response**: Result converted to MCP tool result format, sent via stdout
+7. **Error Handling**: Any thrown errors caught and converted to MCP error responses
 
 ## Design Decisions
 
@@ -144,7 +146,7 @@ The EPUB Reader MCP server is a TypeScript implementation of a Model Context Pro
 
 - **`index.ts`**: Server entry point, stdio transport setup, graceful shutdown
 - **`book-manager.ts`**: Session lifecycle, thread-safe session access, error handling
-- **`tool-registration.ts`**: Tool routing, validation, error conversion to MCP format
+- **`tool-registration.ts`**: Tool registry, discovery metadata, validation, error conversion to MCP format
 - **`types.ts`**: Server-side types (`BookSession`, `SessionId`, all tool I/O types)
 
 **Key Design**: Separates protocol handling from business logic.
@@ -335,7 +337,7 @@ ApplicationError
 
 ### Error Conversion
 
-Tool registration layer catches errors and converts to MCP error responses:
+Tool registration/protocol layer catches errors and converts to MCP error responses:
 
 ```typescript
 catch (error) {
@@ -385,6 +387,7 @@ catch (error) {
 2. **Session IDs**: Cryptographically random, validate before use
 3. **Content Sanitization**: EPUB HTML may contain scripts; snippets returned to clients are stripped of HTML
 4. **Search Safety**: Search query is length-limited and regex-escaped to reduce ReDoS and regex injection risk
+5. **Tool Discovery Safety**: Tool metadata is centralized so `tools/list` stays authoritative and consistent
 
 ### Resource Limits
 

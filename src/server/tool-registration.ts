@@ -7,108 +7,54 @@
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { BookManager } from './book-manager';
-import { ToolName, ToolInputSchemas, validateToolInput } from '../utils/validation';
-
-
-// Import tool factory functions
-import { createOpenTool } from '../tools/open';
-import { createCloseTool } from '../tools/close';
-import { createListOpenBooksTool } from '../tools/list-books';
-import { createNavigateNextTool, createNavigatePreviousTool } from '../tools/navigate';
-import { createJumpToPageTool, createJumpToChapterTool } from '../tools/jump';
-import { createGetPositionTool } from '../tools/position';
-import { createSearchTool } from '../tools/search';
-import { createGetTocTool } from '../tools/toc';
-import { createGetMetadataTool } from '../tools/metadata';
-import { createFootnoteTool } from '../tools/footnote';
-import { createGetChapterSummaryTool } from '../tools/summary';
-
-// Map tool names to their factory functions
-const toolFactories = {
-  'ebook/open': createOpenTool,
-  'ebook/close': createCloseTool,
-  'ebook/list_open_books': createListOpenBooksTool,
-  'ebook/navigate_next': createNavigateNextTool,
-  'ebook/navigate_previous': createNavigatePreviousTool,
-  'ebook/jump_to_page': createJumpToPageTool,
-  'ebook/jump_to_chapter': createJumpToChapterTool,
-  'ebook/get_position': createGetPositionTool,
-  'ebook/search': createSearchTool,
-  'ebook/get_toc': createGetTocTool,
-  'ebook/get_metadata': createGetMetadataTool,
-  'ebook/get_footnote': createFootnoteTool,
-  'ebook/get_chapter_summary': createGetChapterSummaryTool,
-} as const;
-
-
+import {
+  CallToolRequestSchema,
+  ErrorCode,
+  ListToolsRequestSchema,
+  McpError,
+  PingRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
+import type { BookManager } from './book-manager';
+import { validateToolInput } from '../utils/validation';
+import {
+  createToolRegistry,
+  formatToolError,
+  formatToolResult,
+} from './tool-registry';
 
 /**
  * Register all tools with the MCP server.
- * 
- * Each tool is registered under the 'tools/call' request type, with the tool name
- * used to route to the appropriate handler. Input validation is performed using
- * the corresponding Zod schema from validation.ts.
- * 
- * @param server - MCP server instance
- * @param bookManager - Shared BookManager instance
+ *
+ * Tool metadata and handlers are centralized in the shared registry so list/call
+ * stay in sync.
  */
 export function registerTools(server: Server, bookManager: BookManager): void {
-  // Set up a single request handler for all tools/call requests
+  const registry = createToolRegistry(bookManager);
+
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({
+    tools: registry.listTools(),
+  }));
+
+  server.setRequestHandler(PingRequestSchema, async () => ({}));
+
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    const { name, arguments: args } = request.params;
-    
-    // Ensure tool exists
-    if (!(name in toolFactories)) {
-      return {
-        error: {
-          code: -32601, // Method not found
-          message: `Unknown tool: ${name}`,
-        },
-      };
+    const tool = registry.getTool(request.params.name);
+
+    if (!tool) {
+      throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${request.params.name}`);
     }
-    
-    // At this point, name is guaranteed to be a valid ToolName
-    const toolName = name as ToolName;
-    
+
+    const validation = validateToolInput(tool.name, request.params.arguments);
+
+    if (!validation.success) {
+      throw new McpError(ErrorCode.InvalidParams, `Invalid input: ${validation.errors.join(', ')}`);
+    }
+
     try {
-      // Get the factory and create the tool instance
-      const factory = toolFactories[toolName];
-      const tool = factory(bookManager);
-      
-      // Validate input and execute handler
-      const validation = validateToolInput(toolName, args);
-      if (!validation.success) {
-        const { errors } = validation;
-        return {
-          error: {
-            code: -32602, // Invalid params
-            message: `Invalid input: ${errors.join(', ')}`,
-          },
-        };
-      }
-      
-      const result = await tool.handler(validation.data);
-      
-      // Convert result to MCP tool result format
-      // Assuming result is already a JSON-serializable object matching the tool's output type
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(result),
-          },
-        ],
-      };
+      const result = await tool.execute(validation.data);
+      return formatToolResult(result);
     } catch (error) {
-      // Convert application errors to MCP error responses
-      return {
-        error: {
-          code: -32603, // Internal error
-          message: error instanceof Error ? error.message : String(error),
-        },
-      };
+      return formatToolError(error);
     }
   });
 }
