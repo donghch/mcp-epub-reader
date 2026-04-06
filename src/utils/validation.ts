@@ -8,6 +8,20 @@
 import * as z from 'zod';
 
 // ============================================================================
+// Security Constants
+// ============================================================================
+
+/**
+ * Maximum allowed length for search queries to prevent DoS attacks.
+ */
+export const MAX_SEARCH_QUERY_LENGTH = 500;
+
+/**
+ * Regex special characters that need escaping in search queries.
+ */
+const REGEX_SPECIAL_CHARS = /[.*+?^${}()|[\]\\]/g;
+
+// ============================================================================
 // Base Schemas (reusable)
 // ============================================================================
 
@@ -26,6 +40,17 @@ export const FilePathSchema = z.string({
   required_error: 'filePath is required',
   invalid_type_error: 'filePath must be a string',
 }).min(1, 'filePath cannot be empty');
+
+/**
+ * Validates that a file path does not contain path traversal sequences.
+ * Rejects paths containing `../` or `..\` which could be used for directory traversal attacks.
+ */
+export const SafeFilePathSchema = z.string()
+  .min(1, 'filePath cannot be empty')
+  .refine(
+    (path) => !path.includes('..') && !path.includes('\\..'),
+    { message: 'Path traversal not allowed' }
+  );
 
 /**
  * Positive integer (≥1) for page numbers and steps.
@@ -222,7 +247,7 @@ export type ToolName = keyof typeof ToolInputSchemas;
 /**
  * Validate input for a specific tool.
  * 
- * @param tool - Tool name (e.g., 'ebook/open')
+ * @param tool - Tool name (e. g., 'ebook/open')
  * @param input - Unknown input data
  * @returns ValidationResult for that tool's input schema
  */
@@ -231,4 +256,34 @@ export function validateToolInput<T extends ToolName>(
   input: unknown,
 ): ValidationResult<z.infer<typeof ToolInputSchemas[T]>> {
   return validateInput(ToolInputSchemas[tool], input);
+}
+
+// ============================================================================
+// Query Sanitization
+// ============================================================================
+
+/**
+ * Sanitizes a search query to prevent injection attacks and DoS.
+ * - Truncates to MAX_SEARCH_QUERY_LENGTH characters
+ * - Escapes regex special characters to prevent regex injection
+ * 
+ * @param query - Raw search query from user input
+ * @returns Sanitized query safe for use in search operations
+ * 
+ * @example
+ * sanitizeSearchQuery('test.*query') // Returns 'test\\.\\*query'
+ * sanitizeSearchQuery('a'.repeat(1000)) // Returns truncated to 500 chars
+ */
+export function sanitizeSearchQuery(query: string): string {
+  if (!query || typeof query !== 'string') {
+    return '';
+  }
+
+  // Truncate to max length to prevent DoS
+  let sanitized = query.slice(0, MAX_SEARCH_QUERY_LENGTH);
+
+  // Escape regex special characters to prevent regex injection
+  sanitized = sanitized.replace(REGEX_SPECIAL_CHARS, '\\$&');
+
+  return sanitized;
 }

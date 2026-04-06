@@ -49,6 +49,8 @@ export interface BookManagerOptions {
   wordsPerPage?: number;
   /** Maximum number of concurrent sessions (default: unlimited) */
   maxSessions?: number;
+  /** Session time-to-live in minutes (default: 60) */
+  sessionTtlMinutes?: number;
 }
 
 /**
@@ -77,6 +79,8 @@ export interface BookManager {
   generateBookId(filePath: string): Promise<string>;
   /** Generate a unique session ID */
   generateSessionId(): string;
+  /** Remove all expired sessions. Returns count of removed sessions. */
+  cleanupExpiredSessions(): number;
 }
 
 /**
@@ -94,9 +98,24 @@ interface InternalSession {
 export class BookManagerImpl implements BookManager {
   private sessions: Map<SessionId, InternalSession> = new Map();
   private wordsPerPage: number;
+  private maxSessions?: number;
+  private sessionTtlMinutes: number;
 
   constructor(options: BookManagerOptions = {}) {
     this.wordsPerPage = options.wordsPerPage ?? 300;
+    this.maxSessions = options.maxSessions;
+    this.sessionTtlMinutes = options.sessionTtlMinutes ?? 60;
+  }
+
+  /**
+   * Check if a session has expired based on its lastAccessed timestamp.
+   * @param lastAccessed - The last accessed timestamp of the session
+   * @returns true if the session has expired, false otherwise
+   */
+  private isSessionExpired(lastAccessed: Date): boolean {
+    const now = new Date();
+    const ttlMs = this.sessionTtlMinutes * 60 * 1000;
+    return (now.getTime() - lastAccessed.getTime()) > ttlMs;
   }
 
   /**
@@ -126,9 +145,15 @@ export class BookManagerImpl implements BookManager {
   /**
    * Open an EPUB file, parse it, paginate, and create a new session.
    * Throws BookManagerError with appropriate subclass on failures.
+   * @throws {BookManagerError} When maximum number of sessions is reached
    */
   async openBook(filePath: string): Promise<BookSession> {
     try {
+      // Check maxSessions limit before creating a new session
+      if (this.maxSessions !== undefined && this.sessions.size >= this.maxSessions) {
+        throw new BookManagerError('Maximum number of sessions reached');
+      }
+
       // 1. Parse EPUB
       const parsed: ParsedEpub = await parseEpub(filePath);
       
@@ -199,11 +224,17 @@ export class BookManagerImpl implements BookManager {
 
   /**
    * Retrieve a session by ID and update its lastAccessed timestamp.
-   * Returns null if no session exists with the given ID.
+   * Returns null if no session exists with the given ID or if the session has expired.
    */
   getBook(sessionId: SessionId): BookSession | null {
     const internal = this.sessions.get(sessionId);
     if (!internal) {
+      return null;
+    }
+
+    // Check if session has expired
+    if (this.isSessionExpired(internal.session.lastAccessed)) {
+      this.sessions.delete(sessionId);
       return null;
     }
     
@@ -224,19 +255,27 @@ export class BookManagerImpl implements BookManager {
 
   /**
    * Update the lastAccessed timestamp of a session without returning it.
-   * No-op if the session does not exist.
+   * No-op if the session does not exist or has expired.
    */
   updateLastAccessed(sessionId: SessionId): void {
     const internal = this.sessions.get(sessionId);
-    if (internal) {
-      this.sessions.set(sessionId, {
-        ...internal,
-        session: {
-          ...internal.session,
-          lastAccessed: new Date(),
-        },
-      });
+    if (!internal) {
+      return;
     }
+
+    // Check if session has expired
+    if (this.isSessionExpired(internal.session.lastAccessed)) {
+      this.sessions.delete(sessionId);
+      return;
+    }
+
+    this.sessions.set(sessionId, {
+      ...internal,
+      session: {
+        ...internal.session,
+        lastAccessed: new Date(),
+      },
+    });
   }
 
   /**
@@ -301,6 +340,24 @@ export class BookManagerImpl implements BookManager {
     return Array.from(this.sessions.values())
       .map(internal => internal.session)
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+  }
+
+  /**
+   * Remove all expired sessions. Returns count of removed sessions.
+   * @returns The number of sessions that were removed
+   */
+  cleanupExpiredSessions(): number {
+    const now = new Date();
+    let removedCount = 0;
+
+    for (const [sessionId, internal] of this.sessions.entries()) {
+      if (this.isSessionExpired(internal.session.lastAccessed)) {
+        this.sessions.delete(sessionId);
+        removedCount++;
+      }
+    }
+
+    return removedCount;
   }
 }
 

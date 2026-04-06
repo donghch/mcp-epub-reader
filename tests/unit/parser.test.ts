@@ -58,6 +58,18 @@ describe('EPUB parser', () => {
       const mockRawContent = '<html><body><aside epub:type="footnote" id="fn1"><p>Footnote 1</p></aside></body></html>';
 
       mockFsPromises.stat.mockResolvedValue({ isFile: () => true, size: 1024 } as any);
+      // Mock fs.open to return valid ZIP magic bytes (PK\x03\x04)
+      mockFsPromises.open.mockResolvedValue({
+        read: jest.fn().mockImplementation(async (buffer: Buffer, offset: number, length: number, position: number) => {
+          // Write ZIP magic bytes to buffer: [0x50, 0x4b, 0x03, 0x04]
+          buffer[0] = 0x50;
+          buffer[1] = 0x4b;
+          buffer[2] = 0x03;
+          buffer[3] = 0x04;
+          return { bytesRead: 4 };
+        }),
+        close: jest.fn().mockResolvedValue(undefined),
+      } as any);
       const mockEpubInstance: any = {
         metadata: mockMetadata,
         flow: mockFlow,

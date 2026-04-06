@@ -40,11 +40,11 @@ npm run build
 
 ### Running the Server
 
-The server uses stdio transport, making it ideal for integration with MCP clients like Claude Desktop.
+The server uses stdio transport, making it ideal for local MCP clients (including OpenClaw).
 
 #### stdio (Local Integration)
 
-For integration with Claude Desktop or other MCP clients:
+For integration with OpenClaw or other MCP clients:
 
 ```bash
 node build/index.js
@@ -54,23 +54,70 @@ The server communicates via stdin/stdout using the MCP JSON-RPC protocol.
 
 ### Configuration
 
-#### Claude Desktop Configuration
+#### OpenClaw Quick Start (recommended)
 
-Add the server to your Claude Desktop configuration (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+OpenClaw can connect to MCP servers over **stdio**. Add this server in OpenClaw’s MCP settings (exact location may vary).
+
+**Example (stdio):**
 
 ```json
 {
-  "mcpServers": {
-    "epub-reader": {
-      "command": "node",
-      "args": ["/absolute/path/to/mcp-epub-reader/build/index.js"],
-      "env": {
-        "LOG_LEVEL": "info"
-      }
+  "command": "node",
+  "args": ["/absolute/path/to/mcp-epub-reader/build/index.js"]
+}
+```
+
+Then use the tools like this:
+
+1) **Open an EPUB**
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "ebook/open",
+    "arguments": {
+      "filePath": "/path/to/book.epub",
+      "autoNavigate": true
     }
   }
 }
 ```
+
+2) **Navigate**
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "ebook/navigate_next",
+    "arguments": {
+      "sessionId": "<sessionId>"
+    }
+  }
+}
+```
+
+3) **Search**
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "ebook/search",
+    "arguments": {
+      "sessionId": "<sessionId>",
+      "query": "adventure",
+      "limit": 10,
+      "contextWindow": 80
+    }
+  }
+}
+```
+
+#### Security notes
+
+This server validates `filePath` (prevents traversal), validates EPUB type (requires `.epub` + ZIP magic bytes), and strips HTML from search snippets.
 
 #### Environment Variables
 
@@ -89,10 +136,10 @@ The server provides 13 tools for EPUB file interaction:
 | `ebook/list_open_books` | List all currently open EPUB sessions | (none) |
 | `ebook/navigate_next` | Move to the next page in the current session | `sessionId: string` |
 | `ebook/navigate_previous` | Move to the previous page in the current session | `sessionId: string` |
-| `ebook/jump_to_page` | Jump to a specific page number | `sessionId: string`, `pageNumber: number` |
-| `ebook/jump_to_chapter` | Jump to a specific chapter (by title or index) | `sessionId: string`, `chapter: string \| number` |
+| `ebook/jump_to_page` | Jump to a specific page number | `sessionId: string`, `page: number` |
+| `ebook/jump_to_chapter` | Jump to a specific chapter | `sessionId: string`, `chapterId: string` |
 | `ebook/get_position` | Get current reading position and progress | `sessionId: string` |
-| `ebook/search` | Search across all chapters for text | `sessionId: string`, `query: string`, `contextWords?: number` |
+| `ebook/search` | Search across all chapters for text | `sessionId: string`, `query: string`, `caseSensitive?: boolean`, `limit?: number`, `contextWindow?: number` |
 | `ebook/get_toc` | Get hierarchical table of contents | `sessionId: string` |
 | `ebook/get_metadata` | Get EPUB metadata (title, author, publisher, etc.) | `sessionId: string` |
 | `ebook/get_footnote` | Resolve a footnote reference by ID | `sessionId: string`, `footnoteId: string` |
@@ -208,19 +255,19 @@ Jump to a specific page number.
 ```typescript
 {
   sessionId: string;
-  pageNumber: number;  // 1-based page number
+  page: number;  // 1-based page number
 }
 ```
 
 #### `ebook/jump_to_chapter`
 
-Jump to a specific chapter by title (case-insensitive partial match) or chapter index (1-based).
+Jump to a specific chapter by `chapterId` (from the EPUB flow entry).
 
 **Input Schema**:
 ```typescript
 {
   sessionId: string;
-  chapter: string | number;  // Chapter title or index
+  chapterId: string;  // Chapter identifier from EPUB flow
 }
 ```
 
@@ -249,7 +296,9 @@ Search across all chapters for text, with optional context words.
 {
   sessionId: string;
   query: string;
-  contextWords?: number;  // Number of context words around matches (default: 50)
+  caseSensitive?: boolean;
+  limit?: number;
+  contextWindow?: number;
 }
 ```
 
@@ -530,7 +579,7 @@ This project is licensed under the [MIT License](LICENSE).
 - [MCP Specification](https://spec.modelcontextprotocol.io)
 - [MCP Documentation](https://modelcontextprotocol.io)
 - [TypeScript SDK Documentation](https://ts.sdk.modelcontextprotocol.io)
-- [Claude Desktop MCP Setup](https://modelcontextprotocol.io/quickstart/user)
+- [MCP client setup (stdio)](https://modelcontextprotocol.io/quickstart/user)
 
 ## Changelog
 
@@ -538,4 +587,4 @@ See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ---
 
-**Note**: This server is designed for use with MCP clients like Claude Desktop. It provides AI agents with EPUB reading capabilities while maintaining session isolation and resource management.
+**Note**: This server is designed for use with MCP clients (e.g., OpenClaw). It provides AI agents with EPUB reading capabilities while maintaining session isolation and resource management.

@@ -11,6 +11,7 @@ import { SessionNotFoundError } from '../server/book-manager';
 import { SearchInput, SearchOutput } from '../server/types';
 import { Chapter } from '../epub/types';
 import { stripHtmlTags } from '../epub/paginator';
+import { sanitizeSearchQuery } from '../utils/validation';
 
 /**
  * Options for text search within a page.
@@ -63,6 +64,7 @@ function findMatchesInText(
 
 /**
  * Build a snippet with surrounding context.
+ * Strips HTML tags from both snippet and context for safe output.
  */
 function buildSnippet(
   text: string,
@@ -72,8 +74,13 @@ function buildSnippet(
 ): { snippet: string; context?: string } {
   const start = Math.max(0, matchIndex - contextWindow);
   const end = Math.min(text.length, matchIndex + matchLength + contextWindow);
-  const snippet = text.substring(matchIndex, matchIndex + matchLength);
-  const context = text.substring(start, end);
+  const rawSnippet = text.substring(matchIndex, matchIndex + matchLength);
+  const rawContext = text.substring(start, end);
+
+  // Strip HTML tags from output for security
+  const snippet = stripHtmlTags(rawSnippet);
+  const context = stripHtmlTags(rawContext);
+
   return { snippet, context };
 }
 
@@ -108,10 +115,13 @@ export async function handleSearch(
     contextWindow: input.contextWindow ?? DEFAULT_OPTIONS.contextWindow,
   };
 
+  // 3. Sanitize the search query to prevent injection attacks
+  const sanitizedQuery = sanitizeSearchQuery(input.query);
+
   const results: SearchOutput['results'] = [];
   let totalMatches = 0;
 
-  // 3. Iterate over each chapter and each page
+  // 4. Iterate over each chapter and each page
   for (const chapter of paginatedChapters) {
     const pages = getChapterPages(chapter);
     if (pages.length === 0) continue;
@@ -123,8 +133,8 @@ export async function handleSearch(
       // Strip HTML tags for searching
       const plainText = stripHtmlTags(pageHtml);
 
-      // Find all matches in this page
-      const matches = findMatchesInText(plainText, input.query, opts.caseSensitive);
+      // Find all matches in this page using sanitized query
+      const matches = findMatchesInText(plainText, sanitizedQuery, opts.caseSensitive);
 
       for (const match of matches) {
         totalMatches++;

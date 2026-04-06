@@ -413,4 +413,108 @@ describe('BookManager', () => {
       });
     });
   });
+
+  describe('BookManagerImpl with maxSessions', () => {
+    it('rejects opening book when maxSessions limit is reached', async () => {
+      // Arrange
+      const manager = new BookManagerImpl({ maxSessions: 2 });
+      
+      // Act - Open 2 books (reaching limit)
+      await manager.openBook('/test1.epub');
+      await manager.openBook('/test2.epub');
+      
+      // Assert - Try to open 3rd - should fail
+      await expect(manager.openBook('/test3.epub')).rejects.toThrow('Maximum number of sessions reached');
+    });
+
+    it('allows opening new book after closing an existing session', async () => {
+      // Arrange
+      const manager = new BookManagerImpl({ maxSessions: 2 });
+      const session1 = await manager.openBook('/test1.epub');
+      await manager.openBook('/test2.epub');
+      
+      // Act - Close first session to free up a slot
+      manager.closeBook(session1.sessionId);
+      
+      // Assert - Should be able to open a new book now
+      const session3 = await manager.openBook('/test3.epub');
+      expect(session3).toBeDefined();
+      expect(manager.listOpenBooks()).toHaveLength(2);
+    });
+
+    it('allows opening books when maxSessions is not set', async () => {
+      // Arrange
+      const manager = new BookManagerImpl(); // No maxSessions limit
+      
+      // Act & Assert - Should be able to open many books
+      await manager.openBook('/test1.epub');
+      await manager.openBook('/test2.epub');
+      await manager.openBook('/test3.epub');
+      expect(manager.listOpenBooks()).toHaveLength(3);
+    });
+  });
+
+  describe('BookManagerImpl with sessionTtlMinutes', () => {
+    it('removes expired session on getBook when session has expired', async () => {
+      // Arrange - Create session, then manually manipulate lastAccessed to be in the past
+      const manager = new BookManagerImpl({ sessionTtlMinutes: 60 });
+      const session = await manager.openBook('/test.epub');
+      
+      // Manually set lastAccessed to 2 hours ago to simulate expiration
+      const expiredTime = new Date(Date.now() - 2 * 60 * 60 * 1000); // 2 hours ago
+      const internal = (manager as any).sessions.get(session.sessionId);
+      internal.session.lastAccessed = expiredTime;
+      
+      // Act - Try to get the book (should trigger expiry check)
+      const result = manager.getBook(session.sessionId);
+      
+      // Assert - Session should be expired and removed
+      expect(result).toBeNull();
+      expect(manager.listOpenBooks()).toHaveLength(0);
+    });
+
+    it('cleanupExpiredSessions removes expired sessions', async () => {
+      // Arrange - Create session with short TTL
+      const manager = new BookManagerImpl({ sessionTtlMinutes: 1 }); // 1 minute TTL
+      const session = await manager.openBook('/test.epub');
+      
+      // Manually set lastAccessed to 2 minutes ago to simulate expiration
+      const expiredTime = new Date(Date.now() - 2 * 60 * 1000); // 2 minutes ago
+      const internal = (manager as any).sessions.get(session.sessionId);
+      internal.session.lastAccessed = expiredTime;
+      
+      // Act
+      const removed = manager.cleanupExpiredSessions();
+      
+      // Assert
+      expect(removed).toBe(1);
+      expect(manager.listOpenBooks()).toHaveLength(0);
+    });
+
+    it('cleanupExpiredSessions returns zero when no sessions are expired', async () => {
+      // Arrange - Use default TTL (60 minutes)
+      const manager = new BookManagerImpl();
+      await manager.openBook('/test.epub');
+      
+      // Act
+      const removed = manager.cleanupExpiredSessions();
+      
+      // Assert
+      expect(removed).toBe(0);
+      expect(manager.listOpenBooks()).toHaveLength(1);
+    });
+
+    it('session remains valid within TTL', async () => {
+      // Arrange - Use a large TTL
+      const manager = new BookManagerImpl({ sessionTtlMinutes: 60 });
+      const session = await manager.openBook('/test.epub');
+      
+      // Act - Get book should work and not remove session
+      const result = manager.getBook(session.sessionId);
+      
+      // Assert
+      expect(result).not.toBeNull();
+      expect(manager.listOpenBooks()).toHaveLength(1);
+    });
+  });
 });

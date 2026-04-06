@@ -1,7 +1,7 @@
 # EPUB Reader MCP Server – Developer Documentation
 
 **Purpose**: Document the architecture, design decisions, and development practices for the EPUB Reader MCP server.
-**Last Updated**: 2026-04-05
+**Last Updated**: 2026-04-06
 
 ## Overview
 
@@ -380,13 +380,16 @@ catch (error) {
 ### Input Validation
 
 1. **File Paths**: Validate EPUB file paths, prevent directory traversal
+   - Rejects `../` and `..\\` sequences
+   - Requires `.epub` extension + ZIP magic bytes (EPUB is a ZIP archive)
 2. **Session IDs**: Cryptographically random, validate before use
-3. **Content Sanitization**: EPUB HTML may contain scripts; rendered as plain text
+3. **Content Sanitization**: EPUB HTML may contain scripts; snippets returned to clients are stripped of HTML
+4. **Search Safety**: Search query is length-limited and regex-escaped to reduce ReDoS and regex injection risk
 
 ### Resource Limits
 
 1. **File Size**: Reject excessively large EPUB files (configurable limit)
-2. **Session Count**: Limit concurrent sessions to prevent DoS
+2. **Session Count & Lifetime**: Enforce `maxSessions` and expire sessions after a TTL
 3. **Memory Usage**: Monitor and limit memory consumption per session
 
 ### Protocol Security

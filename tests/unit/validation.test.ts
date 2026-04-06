@@ -13,6 +13,7 @@ import {
   // Base schemas
   SessionIdSchema,
   FilePathSchema,
+  SafeFilePathSchema,
   PositiveIntSchema,
   NonNegativeIntSchema,
   // Tool input schemas
@@ -34,6 +35,7 @@ import {
   ValidationResult,
   ToolInputSchemas,
   validateToolInput,
+  sanitizeSearchQuery,
 } from '../../src/utils/validation';
 
 // ============================================================================
@@ -420,5 +422,91 @@ describe('validateToolInput', () => {
       const result = validateToolInput(tool, input);
       expect(result.success).toBe(true);
     });
+  });
+});
+
+// ============================================================================
+// Security Schema Tests
+// ============================================================================
+
+describe('SafeFilePathSchema', () => {
+  it('accepts normal file path', () => {
+    const result = SafeFilePathSchema.safeParse('/books/my-book.epub');
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts file path with underscores and hyphens', () => {
+    const result = SafeFilePathSchema.safeParse('/books/my_book-1.epub');
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts Windows-style path without backslash traversal', () => {
+    const result = SafeFilePathSchema.safeParse('C:\\books\\my-book.epub');
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects path with ../ traversal', () => {
+    const result = SafeFilePathSchema.safeParse('/books/../../../etc/passwd');
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.errors[0].message).toBe('Path traversal not allowed');
+    }
+  });
+
+  it('rejects path with ..\\ traversal', () => {
+    const result = SafeFilePathSchema.safeParse('/books/..\\windows\\system32');
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.errors[0].message).toBe('Path traversal not allowed');
+    }
+  });
+
+  it('rejects backslash-only traversal', () => {
+    const result = SafeFilePathSchema.safeParse('C:\\..\\..\\windows');
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects empty path', () => {
+    const result = SafeFilePathSchema.safeParse('');
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('sanitizeSearchQuery', () => {
+  it('returns query unchanged if under limit', () => {
+    expect(sanitizeSearchQuery('hello')).toBe('hello');
+  });
+
+  it('returns query unchanged for exact 500 characters', () => {
+    const query = 'a'.repeat(500);
+    expect(sanitizeSearchQuery(query)).toBe(query);
+  });
+
+  it('truncates query over 500 characters', () => {
+    const longQuery = 'a'.repeat(600);
+    const result = sanitizeSearchQuery(longQuery);
+    expect(result.length).toBe(500);
+    expect(result).toBe('a'.repeat(500));
+  });
+
+  it('escapes regex special characters', () => {
+    expect(sanitizeSearchQuery('test.*+?^${}()|[]\\')).toBe('test\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\\\');
+  });
+
+  it('escapes dot and asterisk for regex safety', () => {
+    expect(sanitizeSearchQuery('search.*pattern')).toBe('search\\.\\*pattern');
+  });
+
+  it('handles empty string', () => {
+    expect(sanitizeSearchQuery('')).toBe('');
+  });
+
+  it('handles non-string input', () => {
+    expect(sanitizeSearchQuery(null as any)).toBe('');
+    expect(sanitizeSearchQuery(undefined as any)).toBe('');
+  });
+
+  it('preserves normal alphanumeric characters', () => {
+    expect(sanitizeSearchQuery('hello world 123')).toBe('hello world 123');
   });
 });

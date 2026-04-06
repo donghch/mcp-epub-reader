@@ -1,4 +1,4 @@
-<!-- Context: project-intelligence/nav | Priority: high | Version: 1.0 | Updated: 2025-01-12 -->
+<!-- Context: project-intelligence/nav | Priority: high | Version: 1.1 | Updated: 2026-04-06 -->
 
 # Project Intelligence
 
@@ -55,6 +55,9 @@ Keep this folder current:
 - Review `living-notes.md` regularly
 - Archive resolved items from decisions-log.md
 
+**Recent Updates**:
+- `technical-domain.md` v1.1 (2026-04-06): Added actual project patterns from mcp-epub-reader codebase
+
 **Management Guide**: See `.opencode/context/core/standards/project-intelligence-management.md` for complete lifecycle management including:
 - How to update, add, and remove files
 - How to create new subfolders
@@ -63,3 +66,7 @@ Keep this folder current:
 - Governance and ownership
 
 See `.opencode/context/core/standards/project-intelligence.md` for the standard itself.
+
+## 📂 Codebase References
+**Navigation Implementation**: This file references all project intelligence files in `.opencode/context/project-intelligence/`
+**Context System**: `.opencode/context/core/` - Core context standards and loading system

@@ -36,6 +36,13 @@ export class InvalidEpubError extends EpubParseError {
   }
 }
 
+export class InvalidFileTypeError extends EpubParseError {
+  constructor(filePath: string, reason: string) {
+    super(`Invalid file type for EPUB: ${filePath}. ${reason}`, undefined, filePath);
+    this.name = 'InvalidFileTypeError';
+  }
+}
+
 export class MissingMetadataError extends EpubParseError {
   constructor(filePath: string, field: string) {
     super(`Missing required metadata field '${field}' in EPUB: ${filePath}`, undefined, filePath);
@@ -62,7 +69,16 @@ const DEFAULT_OPTIONS: Required<ParseOptions> = {
 };
 
 /**
- * Validates file existence and size before parsing
+ * ZIP magic bytes (first 4 bytes of a valid ZIP file)
+ * EPUB files are ZIP archives, so they must start with these bytes.
+ */
+const ZIP_MAGIC_BYTES = [0x50, 0x4b, 0x03, 0x04]; // PK\x03\x04
+
+/**
+ * Validates file existence, type, and size before parsing.
+ * - Checks file extension is .epub
+ * - Verifies ZIP magic bytes (PK\x03\x04)
+ * - Validates file size is within limits
  */
 async function validateFile(filePath: string, maxSizeBytes: number): Promise<void> {
   const fs = await import('fs/promises');
@@ -71,10 +87,41 @@ async function validateFile(filePath: string, maxSizeBytes: number): Promise<voi
     if (!stats.isFile()) {
       throw new FileNotFoundError(filePath);
     }
+
+    // Check file extension
+    const normalizedPath = filePath.toLowerCase();
+    if (!normalizedPath.endsWith('.epub')) {
+      throw new InvalidFileTypeError(filePath, 'File must have .epub extension');
+    }
+
+    // Verify ZIP magic bytes (EPUB is a ZIP archive)
+    if (stats.size >= 4) {
+      const buffer = Buffer.alloc(4);
+      const fileHandle = await fs.open(filePath, 'r');
+      try {
+        await fileHandle.read(buffer, 0, 4, 0);
+        const bytes = Array.from(buffer);
+        const isValidZip = bytes.every((byte, index) => byte === ZIP_MAGIC_BYTES[index]);
+        if (!isValidZip) {
+          throw new InvalidFileTypeError(filePath, 'File is not a valid ZIP/EPUB archive');
+        }
+      } finally {
+        await fileHandle.close();
+      }
+    } else {
+      throw new InvalidFileTypeError(filePath, 'File is too small to be a valid EPUB');
+    }
+
+    // Check file size
     if (stats.size > maxSizeBytes) {
       throw new EpubParseError(`EPUB file too large: ${stats.size} bytes exceeds limit of ${maxSizeBytes} bytes`, undefined, filePath);
     }
   } catch (error: any) {
+    if (error instanceof FileNotFoundError || 
+        error instanceof InvalidFileTypeError ||
+        error instanceof EpubParseError) {
+      throw error;
+    }
     if (error.code === 'ENOENT') {
       throw new FileNotFoundError(filePath, error);
     }
