@@ -69,7 +69,7 @@ const objectSchema = (
 
 const TOOL_BLUEPRINTS: readonly ToolBlueprint[] = [
   {
-    name: 'ebook/open',
+    name: 'ebook__open',
     title: 'Open EPUB',
     description: 'Open an EPUB file and create a reading session.',
     inputSchema: objectSchema({
@@ -79,7 +79,7 @@ const TOOL_BLUEPRINTS: readonly ToolBlueprint[] = [
     createTool: createOpenTool,
   },
   {
-    name: 'ebook/close',
+    name: 'ebook__close',
     title: 'Close EPUB',
     description: 'Close an open book session.',
     inputSchema: objectSchema({
@@ -88,14 +88,14 @@ const TOOL_BLUEPRINTS: readonly ToolBlueprint[] = [
     createTool: createCloseTool,
   },
   {
-    name: 'ebook/list_open_books',
+    name: 'ebook__list_open_books',
     title: 'List Open Books',
     description: 'List currently open book sessions.',
     inputSchema: objectSchema({}),
     createTool: createListOpenBooksTool,
   },
   {
-    name: 'ebook/navigate_next',
+    name: 'ebook__navigate_next',
     title: 'Navigate Next',
     description: 'Advance the current reading position.',
     inputSchema: objectSchema({
@@ -105,7 +105,7 @@ const TOOL_BLUEPRINTS: readonly ToolBlueprint[] = [
     createTool: createNavigateNextTool,
   },
   {
-    name: 'ebook/navigate_previous',
+    name: 'ebook__navigate_previous',
     title: 'Navigate Previous',
     description: 'Move the current reading position backward.',
     inputSchema: objectSchema({
@@ -115,7 +115,7 @@ const TOOL_BLUEPRINTS: readonly ToolBlueprint[] = [
     createTool: createNavigatePreviousTool,
   },
   {
-    name: 'ebook/jump_to_page',
+    name: 'ebook__jump_to_page',
     title: 'Jump to Page',
     description: 'Jump to a specific page.',
     inputSchema: objectSchema({
@@ -125,7 +125,7 @@ const TOOL_BLUEPRINTS: readonly ToolBlueprint[] = [
     createTool: createJumpToPageTool,
   },
   {
-    name: 'ebook/jump_to_chapter',
+    name: 'ebook__jump_to_chapter',
     title: 'Jump to Chapter',
     description: 'Jump to a specific chapter.',
     inputSchema: objectSchema({
@@ -135,7 +135,7 @@ const TOOL_BLUEPRINTS: readonly ToolBlueprint[] = [
     createTool: createJumpToChapterTool,
   },
   {
-    name: 'ebook/get_position',
+    name: 'ebook__get_position',
     title: 'Get Position',
     description: 'Get the current reading position.',
     inputSchema: objectSchema({
@@ -144,7 +144,7 @@ const TOOL_BLUEPRINTS: readonly ToolBlueprint[] = [
     createTool: createGetPositionTool,
   },
   {
-    name: 'ebook/search',
+    name: 'ebook__search',
     title: 'Search Book',
     description: 'Search within the book.',
     inputSchema: objectSchema({
@@ -157,7 +157,7 @@ const TOOL_BLUEPRINTS: readonly ToolBlueprint[] = [
     createTool: createSearchTool,
   },
   {
-    name: 'ebook/get_toc',
+    name: 'ebook__get_toc',
     title: 'Get Table of Contents',
     description: 'Get the table of contents.',
     inputSchema: objectSchema({
@@ -166,7 +166,7 @@ const TOOL_BLUEPRINTS: readonly ToolBlueprint[] = [
     createTool: createGetTocTool,
   },
   {
-    name: 'ebook/get_metadata',
+    name: 'ebook__get_metadata',
     title: 'Get Metadata',
     description: 'Get book metadata.',
     inputSchema: objectSchema({
@@ -175,7 +175,7 @@ const TOOL_BLUEPRINTS: readonly ToolBlueprint[] = [
     createTool: createGetMetadataTool,
   },
   {
-    name: 'ebook/get_footnote',
+    name: 'ebook__get_footnote',
     title: 'Get Footnote',
     description: 'Get a footnote by ID.',
     inputSchema: objectSchema({
@@ -185,7 +185,7 @@ const TOOL_BLUEPRINTS: readonly ToolBlueprint[] = [
     createTool: createFootnoteTool,
   },
   {
-    name: 'ebook/get_chapter_summary',
+    name: 'ebook__get_chapter_summary',
     title: 'Get Chapter Summary',
     description: 'Get a summary of a chapter.',
     inputSchema: objectSchema({

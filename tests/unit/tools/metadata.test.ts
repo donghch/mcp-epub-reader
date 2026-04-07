@@ -1,5 +1,5 @@
 /**
- * Unit tests for ebook/get_metadata tool.
+ * Unit tests for ebook__get_metadata tool.
  * 
  * Follows AAA (Arrange‑Act‑Assert) pattern and tests:
  * - Successful metadata retrieval with complete metadata
@@ -15,7 +15,7 @@ import { SessionNotFoundError } from '../../../src/server/book-manager';
 import { BookSession } from '../../../src/server/types';
 import { BookMetadata } from '../../../src/epub/types';
 
-describe('ebook/get_metadata tool', () => {
+describe('ebook__get_metadata tool', () => {
   let mockBookManager: jest.Mocked<BookManager>;
   const mockSessionId = 'session-123';
   
@@ -168,7 +168,7 @@ describe('ebook/get_metadata tool', () => {
       const tool = createGetMetadataTool(mockBookManager);
       
       // Assert
-      expect(tool.name).toBe('ebook/get_metadata');
+      expect(tool.name).toBe('ebook__get_metadata');
       expect(typeof tool.handler).toBe('function');
     });
     

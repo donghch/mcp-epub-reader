@@ -1,5 +1,5 @@
 /**
- * Unit tests for ebook/get_position tool.
+ * Unit tests for ebook__get_position tool.
  * 
  * Follows AAA (Arrange‑Act‑Assert) pattern and tests:
  * - Successful position retrieval with valid session ID
@@ -18,7 +18,7 @@ import { SessionNotFoundError } from '../../../src/server/book-manager';
 import { BookSession } from '../../../src/server/types';
 import { BookMetadata, Chapter } from '../../../src/epub/types';
 
-describe('ebook/get_position tool', () => {
+describe('ebook__get_position tool', () => {
   let mockBookManager: jest.Mocked<BookManager>;
   const mockSessionId = 'session-123';
   
@@ -285,7 +285,7 @@ describe('ebook/get_position tool', () => {
       const tool = createGetPositionTool(mockBookManager);
 
       // Assert
-      expect(tool.name).toBe('ebook/get_position');
+      expect(tool.name).toBe('ebook__get_position');
       expect(typeof tool.handler).toBe('function');
     });
 

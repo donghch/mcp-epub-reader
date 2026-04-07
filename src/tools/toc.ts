@@ -1,5 +1,5 @@
 /**
- * ebook/get_toc – Get hierarchical table of contents for a book session
+ * ebook__get_toc – Get hierarchical table of contents for a book session
  * 
  * This tool returns the table of contents (TOC) of an open EPUB book session.
  * The TOC is returned as a hierarchical structure where each entry includes
@@ -15,7 +15,7 @@ import { validateInput, GetTocInputSchema } from '../utils/validation';
 import { TOCEntry } from '../epub/types';
 
 /**
- * Handle the ebook/get_toc tool request.
+ * Handle the ebook__get_toc tool request.
  * 
  * @param input - Validated input containing sessionId
  * @param bookManager - BookManager instance for session lifecycle
@@ -49,14 +49,14 @@ export async function handleGetToc(
 }
 
 /**
- * Factory function to create an MCP tool for ebook/get_toc with dependency injection.
+ * Factory function to create an MCP tool for ebook__get_toc with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createGetTocTool(bookManager: BookManager) {
   return {
-    name: 'ebook/get_toc' as const,
+    name: 'ebook__get_toc' as const,
     handler: (input: unknown) => handleGetToc(input as GetTocInput, bookManager),
   };
 }

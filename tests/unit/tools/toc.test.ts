@@ -1,5 +1,5 @@
 /**
- * Unit tests for ebook/get_toc tool.
+ * Unit tests for ebook__get_toc tool.
  * 
  * Follows AAA (Arrange‑Act‑Assert) pattern and tests:
  * - Successful TOC retrieval with valid session ID
@@ -17,7 +17,7 @@ import { SessionNotFoundError } from '../../../src/server/book-manager';
 import { BookSession } from '../../../src/server/types';
 import { BookMetadata, TOCEntry } from '../../../src/epub/types';
 
-describe('ebook/get_toc tool', () => {
+describe('ebook__get_toc tool', () => {
   let mockBookManager: jest.Mocked<BookManager>;
   const mockSessionId = 'session-123';
 
@@ -273,7 +273,7 @@ describe('ebook/get_toc tool', () => {
       const tool = createGetTocTool(mockBookManager);
 
       // Assert
-      expect(tool.name).toBe('ebook/get_toc');
+      expect(tool.name).toBe('ebook__get_toc');
       expect(typeof tool.handler).toBe('function');
     });
 

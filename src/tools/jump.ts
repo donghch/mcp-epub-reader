@@ -1,5 +1,5 @@
 /**
- * ebook/jump_to_page and ebook/jump_to_chapter – Jump to specific page or chapter
+ * ebook__jump_to_page and ebook__jump_to_chapter – Jump to specific page or chapter
  * 
  * These tools allow navigating directly to a target page number or chapter.
  * They validate that the page is within the book's total pages and that the
@@ -68,7 +68,7 @@ function findChapterByIdOrTitleOrIndex(chapters: Chapter[], chapterId: string): 
 }
 
 /**
- * Handle the ebook/jump_to_page tool request.
+ * Handle the ebook__jump_to_page tool request.
  * 
  * @param input - Validated input containing sessionId and page number
  * @param bookManager - BookManager instance for session lifecycle
@@ -139,7 +139,7 @@ export async function handleJumpToPage(
 }
 
 /**
- * Handle the ebook/jump_to_chapter tool request.
+ * Handle the ebook__jump_to_chapter tool request.
  * 
  * @param input - Validated input containing sessionId and chapterId
  * @param bookManager - BookManager instance for session lifecycle
@@ -217,27 +217,27 @@ export async function handleJumpToChapter(
 }
 
 /**
- * Factory function to create an MCP tool for ebook/jump_to_page with dependency injection.
+ * Factory function to create an MCP tool for ebook__jump_to_page with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createJumpToPageTool(bookManager: BookManager) {
   return {
-    name: 'ebook/jump_to_page' as const,
+    name: 'ebook__jump_to_page' as const,
     handler: (input: unknown) => handleJumpToPage(input as JumpToPageInput, bookManager),
   };
 }
 
 /**
- * Factory function to create an MCP tool for ebook/jump_to_chapter with dependency injection.
+ * Factory function to create an MCP tool for ebook__jump_to_chapter with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createJumpToChapterTool(bookManager: BookManager) {
   return {
-    name: 'ebook/jump_to_chapter' as const,
+    name: 'ebook__jump_to_chapter' as const,
     handler: (input: unknown) => handleJumpToChapter(input as JumpToChapterInput, bookManager),
   };
 }

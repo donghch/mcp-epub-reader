@@ -1,5 +1,5 @@
 /**
- * ebook/get_chapter_summary – Generate a summary of a chapter
+ * ebook__get_chapter_summary – Generate a summary of a chapter
  * 
  * This tool extracts key sentences from a chapter's content, providing a concise
  * summary. It strips HTML tags, splits the text into paragraphs, and selects
@@ -103,7 +103,7 @@ function generateSummary(rawHtml: string, maxSentences: number = DEFAULT_MAX_SEN
 }
 
 /**
- * Handle the ebook/get_chapter_summary tool request.
+ * Handle the ebook__get_chapter_summary tool request.
  * 
  * @param input - Validated input containing sessionId, chapterId, and optional maxSentences
  * @param bookManager - BookManager instance for session lifecycle
@@ -167,14 +167,14 @@ export async function handleGetChapterSummary(
 }
 
 /**
- * Factory function to create an MCP tool for ebook/get_chapter_summary with dependency injection.
+ * Factory function to create an MCP tool for ebook__get_chapter_summary with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createGetChapterSummaryTool(bookManager: BookManager) {
   return {
-    name: 'ebook/get_chapter_summary' as const,
+    name: 'ebook__get_chapter_summary' as const,
     handler: (input: unknown) => handleGetChapterSummary(input as GetChapterSummaryInput, bookManager),
   };
 }

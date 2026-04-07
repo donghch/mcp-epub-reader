@@ -77,19 +77,19 @@ describe('MCP Server Integration', () => {
     expect(result).toHaveProperty('tools');
     expect((result as { tools: Array<{ name: string }> }).tools).toHaveLength(13);
     expect((result as { tools: Array<{ name: string }> }).tools.map((tool) => tool.name)).toEqual([
-      'ebook/open',
-      'ebook/close',
-      'ebook/list_open_books',
-      'ebook/navigate_next',
-      'ebook/navigate_previous',
-      'ebook/jump_to_page',
-      'ebook/jump_to_chapter',
-      'ebook/get_position',
-      'ebook/search',
-      'ebook/get_toc',
-      'ebook/get_metadata',
-      'ebook/get_footnote',
-      'ebook/get_chapter_summary',
+      'ebook__open',
+      'ebook__close',
+      'ebook__list_open_books',
+      'ebook__navigate_next',
+      'ebook__navigate_previous',
+      'ebook__jump_to_page',
+      'ebook__jump_to_chapter',
+      'ebook__get_position',
+      'ebook__search',
+      'ebook__get_toc',
+      'ebook__get_metadata',
+      'ebook__get_footnote',
+      'ebook__get_chapter_summary',
     ]);
   });
 
@@ -119,7 +119,7 @@ describe('MCP Server Integration', () => {
     const handler = getHandler(server, CallToolRequestSchema);
     const request = handler({
       params: {
-        name: 'ebook/open',
+        name: 'ebook__open',
         arguments: {},
       },
     });
@@ -134,7 +134,7 @@ describe('MCP Server Integration', () => {
 
     const result = await handler({
       params: {
-        name: 'ebook/list_open_books',
+        name: 'ebook__list_open_books',
         arguments: {},
       },
     });

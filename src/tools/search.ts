@@ -1,5 +1,5 @@
 /**
- * ebook/search – Search within the book's content
+ * ebook__search – Search within the book's content
  * 
  * This tool performs full-text search across all chapters of an open book.
  * It strips HTML tags from chapter content, searches case‑insensitively by default,
@@ -85,7 +85,7 @@ function buildSnippet(
 }
 
 /**
- * Handle the ebook/search tool request.
+ * Handle the ebook__search tool request.
  * 
  * @param input - Validated input containing sessionId, query, caseSensitive, limit
  * @param bookManager - BookManager instance for session lifecycle
@@ -161,14 +161,14 @@ export async function handleSearch(
 }
 
 /**
- * Factory function to create an MCP tool for ebook/search with dependency injection.
+ * Factory function to create an MCP tool for ebook__search with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createSearchTool(bookManager: BookManager) {
   return {
-    name: 'ebook/search' as const,
+    name: 'ebook__search' as const,
     handler: (input: unknown) => handleSearch(input as SearchInput, bookManager),
   };
 }

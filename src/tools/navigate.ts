@@ -1,5 +1,5 @@
 /**
- * ebook/navigate_next and ebook/navigate_previous – Navigate forward/backward through a book
+ * ebook__navigate_next and ebook__navigate_previous – Navigate forward/backward through a book
  * 
  * These tools move the reading position by a specified number of pages (default: 1),
  * handling chapter boundaries and respecting book limits. They return the updated
@@ -105,7 +105,7 @@ async function handleNavigate(
 }
 
 /**
- * Handle the ebook/navigate_next tool request.
+ * Handle the ebook__navigate_next tool request.
  * 
  * @param input - Validated input containing sessionId and optional steps
  * @param bookManager - BookManager instance for session lifecycle
@@ -119,7 +119,7 @@ export async function handleNavigateNext(
 }
 
 /**
- * Handle the ebook/navigate_previous tool request.
+ * Handle the ebook__navigate_previous tool request.
  * 
  * @param input - Validated input containing sessionId and optional steps
  * @param bookManager - BookManager instance for session lifecycle
@@ -133,27 +133,27 @@ export async function handleNavigatePrevious(
 }
 
 /**
- * Factory function to create an MCP tool for ebook/navigate_next with dependency injection.
+ * Factory function to create an MCP tool for ebook__navigate_next with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createNavigateNextTool(bookManager: BookManager) {
   return {
-    name: 'ebook/navigate_next' as const,
+    name: 'ebook__navigate_next' as const,
     handler: (input: unknown) => handleNavigateNext(input as NavigateNextInput, bookManager),
   };
 }
 
 /**
- * Factory function to create an MCP tool for ebook/navigate_previous with dependency injection.
+ * Factory function to create an MCP tool for ebook__navigate_previous with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createNavigatePreviousTool(bookManager: BookManager) {
   return {
-    name: 'ebook/navigate_previous' as const,
+    name: 'ebook__navigate_previous' as const,
     handler: (input: unknown) => handleNavigatePrevious(input as NavigatePreviousInput, bookManager),
   };
 }

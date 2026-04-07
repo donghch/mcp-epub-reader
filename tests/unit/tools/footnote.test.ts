@@ -1,5 +1,5 @@
 /**
- * Unit tests for ebook/get_footnote tool.
+ * Unit tests for ebook__get_footnote tool.
  * 
  * Follows AAA (Arrange‑Act‑Assert) pattern and tests:
  * - Successful footnote retrieval by ID
@@ -15,7 +15,7 @@ import { SessionNotFoundError } from '../../../src/server/book-manager';
 import { BookSession } from '../../../src/server/types';
 import { Footnote } from '../../../src/epub/types';
 
-describe('ebook/get_footnote tool', () => {
+describe('ebook__get_footnote tool', () => {
   let mockBookManager: jest.Mocked<BookManager>;
   const mockSessionId = 'session-123';
   const mockFootnoteId = 'fn-1';
@@ -195,7 +195,7 @@ describe('ebook/get_footnote tool', () => {
       const tool = createFootnoteTool(mockBookManager);
       
       // Assert
-      expect(tool.name).toBe('ebook/get_footnote');
+      expect(tool.name).toBe('ebook__get_footnote');
       expect(typeof tool.handler).toBe('function');
     });
     

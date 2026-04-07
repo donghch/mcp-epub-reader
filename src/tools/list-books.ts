@@ -1,5 +1,5 @@
 /**
- * ebook/list_open_books – List currently open book sessions
+ * ebook__list_open_books – List currently open book sessions
  * 
  * This tool returns an array of all active book sessions with their session IDs,
  * book IDs, metadata, and reading positions. Returns an empty array when no books
@@ -10,7 +10,7 @@ import { BookManager } from '../server/book-manager';
 import { ListOpenBooksInput, ListOpenBooksOutput } from '../server/types';
 
 /**
- * Handle the ebook/list_open_books tool request.
+ * Handle the ebook__list_open_books tool request.
  * 
  * @param input - Validated input (empty object)
  * @param bookManager - BookManager instance for session lifecycle
@@ -31,14 +31,14 @@ export async function handleListOpenBooks(
 }
 
 /**
- * Factory function to create an MCP tool for ebook/list_open_books with dependency injection.
+ * Factory function to create an MCP tool for ebook__list_open_books with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createListOpenBooksTool(bookManager: BookManager) {
   return {
-    name: 'ebook/list_open_books' as const,
+    name: 'ebook__list_open_books' as const,
     handler: (input: unknown) => handleListOpenBooks(input as ListOpenBooksInput, bookManager),
   };
 }

@@ -62,7 +62,7 @@ The EPUB Reader MCP server is a TypeScript implementation of a Model Context Pro
 
 1. **Handshake**: MCP client initializes over stdio; the SDK handles `initialize` / `initialized`
 2. **Discovery**: `tools/list` returns the registry of available EPUB tools
-3. **Routing**: `tools/call` resolves the requested tool name (`ebook/open`, etc.)
+3. **Routing**: `tools/call` resolves the requested tool name (`ebook__open`, etc.)
 4. **Validation**: Input validated against Zod schema, errors returned if invalid
 5. **Execution**: Tool handler executes business logic using BookManager
 6. **Response**: Result converted to MCP tool result format, sent via stdout
@@ -130,7 +130,7 @@ The EPUB Reader MCP server is a TypeScript implementation of a Model Context Pro
 **Why**: Multiple EPUB files may be open simultaneously; sessions isolate state.
 
 **Implementation**:
-- Each `ebook/open` creates a unique session ID
+- Each `ebook__open` creates a unique session ID
 - Session stores parsing result, pagination, current position
 - `BookManager` tracks sessions with LRU-like cleanup on close
 - Session IDs are cryptographically random to prevent guessing
@@ -292,7 +292,7 @@ describe('EPUB Parser', () => {
    
    export function createNewTool(bookManager: BookManager) {
      return {
-       name: 'ebook/new_tool' as const,
+       name: 'ebook__new_tool' as const,
        handler: (input: NewToolInput) => handleNewTool(input, bookManager),
      };
    }
@@ -304,7 +304,7 @@ describe('EPUB Parser', () => {
    
    const toolFactories = {
      // ... existing
-     'ebook/new_tool': createNewTool,
+     'ebook__new_tool': createNewTool,
    };
    ```
 

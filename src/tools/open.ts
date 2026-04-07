@@ -1,5 +1,5 @@
 /**
- * ebook/open – Open an EPUB file and create a reading session
+ * ebook__open – Open an EPUB file and create a reading session
  * 
  * This tool validates the file path, parses the EPUB, paginates its content,
  * and creates a new session with metadata, table of contents, and initial
@@ -11,7 +11,7 @@ import { OpenBookInput, OpenBookOutput } from '../server/types';
 import { BookManagerError, FileAccessError } from '../server/book-manager';
 
 /**
- * Handle the ebook/open tool request.
+ * Handle the ebook__open tool request.
  * 
  * @param input - Validated input containing filePath (and optional autoNavigate)
  * @param bookManager - BookManager instance for session lifecycle
@@ -38,14 +38,14 @@ export async function handleOpenBook(
 }
 
 /**
- * Factory function to create an MCP tool for ebook/open with dependency injection.
+ * Factory function to create an MCP tool for ebook__open with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createOpenTool(bookManager: BookManager) {
   return {
-    name: 'ebook/open' as const,
+    name: 'ebook__open' as const,
     handler: (input: unknown) => handleOpenBook(input as OpenBookInput, bookManager),
   };
 }

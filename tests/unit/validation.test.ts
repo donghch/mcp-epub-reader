@@ -383,18 +383,18 @@ describe('validateInput', () => {
 // ============================================================================
 
 describe('validateToolInput', () => {
-  it('validates ebook/open input', () => {
-    const result = validateToolInput('ebook/open', { filePath: '/book.epub' });
+  it('validates ebook__open input', () => {
+    const result = validateToolInput('ebook__open', { filePath: '/book.epub' });
     expectSuccess(result);
   });
 
-  it('validates ebook/close input', () => {
-    const result = validateToolInput('ebook/close', { sessionId: 'sess-1' });
+  it('validates ebook__close input', () => {
+    const result = validateToolInput('ebook__close', { sessionId: 'sess-1' });
     expectSuccess(result);
   });
 
   it('rejects invalid tool input with appropriate errors', () => {
-    const result = validateToolInput('ebook/jump_to_page', { sessionId: '', page: -1 });
+    const result = validateToolInput('ebook__jump_to_page', { sessionId: '', page: -1 });
     expectFailure(result, 2);
   });
 
@@ -403,19 +403,19 @@ describe('validateToolInput', () => {
     expect(tools).toHaveLength(13);
     // Quick smoke test: each schema should accept a minimal valid input
     const minimalInputs: Record<string, unknown> = {
-      'ebook/open': { filePath: '/test.epub' },
-      'ebook/close': { sessionId: 'sess' },
-      'ebook/list_open_books': {},
-      'ebook/navigate_next': { sessionId: 'sess' },
-      'ebook/navigate_previous': { sessionId: 'sess' },
-      'ebook/jump_to_page': { sessionId: 'sess', page: 1 },
-      'ebook/jump_to_chapter': { sessionId: 'sess', chapterId: 'chap' },
-      'ebook/get_position': { sessionId: 'sess' },
-      'ebook/search': { sessionId: 'sess', query: 'q' },
-      'ebook/get_toc': { sessionId: 'sess' },
-      'ebook/get_metadata': { sessionId: 'sess' },
-      'ebook/get_footnote': { sessionId: 'sess', footnoteId: 'fn' },
-      'ebook/get_chapter_summary': { sessionId: 'sess', chapterId: 'chap' },
+      'ebook__open': { filePath: '/test.epub' },
+      'ebook__close': { sessionId: 'sess' },
+      'ebook__list_open_books': {},
+      'ebook__navigate_next': { sessionId: 'sess' },
+      'ebook__navigate_previous': { sessionId: 'sess' },
+      'ebook__jump_to_page': { sessionId: 'sess', page: 1 },
+      'ebook__jump_to_chapter': { sessionId: 'sess', chapterId: 'chap' },
+      'ebook__get_position': { sessionId: 'sess' },
+      'ebook__search': { sessionId: 'sess', query: 'q' },
+      'ebook__get_toc': { sessionId: 'sess' },
+      'ebook__get_metadata': { sessionId: 'sess' },
+      'ebook__get_footnote': { sessionId: 'sess', footnoteId: 'fn' },
+      'ebook__get_chapter_summary': { sessionId: 'sess', chapterId: 'chap' },
     };
     tools.forEach((tool) => {
       const input = minimalInputs[tool];

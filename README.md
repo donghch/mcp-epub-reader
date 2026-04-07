@@ -75,7 +75,7 @@ Then use the tools like this:
 {
   "method": "tools/call",
   "params": {
-    "name": "ebook/open",
+    "name": "ebook__open",
     "arguments": {
       "filePath": "/path/to/book.epub",
       "autoNavigate": true
@@ -90,7 +90,7 @@ Then use the tools like this:
 {
   "method": "tools/call",
   "params": {
-    "name": "ebook/navigate_next",
+    "name": "ebook__navigate_next",
     "arguments": {
       "sessionId": "<sessionId>"
     }
@@ -104,7 +104,7 @@ Then use the tools like this:
 {
   "method": "tools/call",
   "params": {
-    "name": "ebook/search",
+    "name": "ebook__search",
     "arguments": {
       "sessionId": "<sessionId>",
       "query": "adventure",
@@ -133,23 +133,23 @@ The server provides 13 tools for EPUB file interaction:
 
 | Tool | Description | Input Parameters |
 |------|-------------|------------------|
-| `ebook/open` | Open an EPUB file and create a reading session | `filePath: string`, `autoNavigate?: boolean` |
-| `ebook/close` | Close a reading session and release resources | `sessionId: string` |
-| `ebook/list_open_books` | List all currently open EPUB sessions | (none) |
-| `ebook/navigate_next` | Move to the next page in the current session | `sessionId: string` |
-| `ebook/navigate_previous` | Move to the previous page in the current session | `sessionId: string` |
-| `ebook/jump_to_page` | Jump to a specific page number | `sessionId: string`, `page: number` |
-| `ebook/jump_to_chapter` | Jump to a specific chapter | `sessionId: string`, `chapterId: string` |
-| `ebook/get_position` | Get current reading position and progress | `sessionId: string` |
-| `ebook/search` | Search across all chapters for text | `sessionId: string`, `query: string`, `caseSensitive?: boolean`, `limit?: number`, `contextWindow?: number` |
-| `ebook/get_toc` | Get hierarchical table of contents | `sessionId: string` |
-| `ebook/get_metadata` | Get EPUB metadata (title, author, publisher, etc.) | `sessionId: string` |
-| `ebook/get_footnote` | Resolve a footnote reference by ID | `sessionId: string`, `footnoteId: string` |
-| `ebook/get_chapter_summary` | Get a summary of the current chapter | `sessionId: string`, `maxSentences?: number` |
+| `ebook__open` | Open an EPUB file and create a reading session | `filePath: string`, `autoNavigate?: boolean` |
+| `ebook__close` | Close a reading session and release resources | `sessionId: string` |
+| `ebook__list_open_books` | List all currently open EPUB sessions | (none) |
+| `ebook__navigate_next` | Move to the next page in the current session | `sessionId: string` |
+| `ebook__navigate_previous` | Move to the previous page in the current session | `sessionId: string` |
+| `ebook__jump_to_page` | Jump to a specific page number | `sessionId: string`, `page: number` |
+| `ebook__jump_to_chapter` | Jump to a specific chapter | `sessionId: string`, `chapterId: string` |
+| `ebook__get_position` | Get current reading position and progress | `sessionId: string` |
+| `ebook__search` | Search across all chapters for text | `sessionId: string`, `query: string`, `caseSensitive?: boolean`, `limit?: number`, `contextWindow?: number` |
+| `ebook__get_toc` | Get hierarchical table of contents | `sessionId: string` |
+| `ebook__get_metadata` | Get EPUB metadata (title, author, publisher, etc.) | `sessionId: string` |
+| `ebook__get_footnote` | Resolve a footnote reference by ID | `sessionId: string`, `footnoteId: string` |
+| `ebook__get_chapter_summary` | Get a summary of the current chapter | `sessionId: string`, `maxSentences?: number` |
 
 ### Tool Details
 
-#### `ebook/open`
+#### `ebook__open`
 
 Opens an EPUB file, parses its content, creates a reading session, and returns metadata.
 
@@ -168,7 +168,7 @@ Opens an EPUB file, parses its content, creates a reading session, and returns m
   "id": 1,
   "method": "tools/call",
   "params": {
-    "name": "ebook/open",
+    "name": "ebook__open",
     "arguments": {
       "filePath": "/path/to/book.epub",
       "autoNavigate": true
@@ -193,18 +193,18 @@ Opens an EPUB file, parses its content, creates a reading session, and returns m
 }
 ```
 
-#### `ebook/close`
+#### `ebook__close`
 
 Closes a reading session and releases associated resources.
 
 **Input Schema**:
 ```typescript
 {
-  sessionId: string;  // Session ID returned by ebook/open
+  sessionId: string;  // Session ID returned by ebook__open
 }
 ```
 
-#### `ebook/list_open_books`
+#### `ebook__list_open_books`
 
 Lists all currently active reading sessions.
 
@@ -228,7 +228,7 @@ Lists all currently active reading sessions.
 }
 ```
 
-#### `ebook/navigate_next` and `ebook/navigate_previous`
+#### `ebook__navigate_next` and `ebook__navigate_previous`
 
 Navigate forward or backward through pages.
 
@@ -249,7 +249,7 @@ Navigate forward or backward through pages.
 }
 ```
 
-#### `ebook/jump_to_page`
+#### `ebook__jump_to_page`
 
 Jump to a specific page number.
 
@@ -261,7 +261,7 @@ Jump to a specific page number.
 }
 ```
 
-#### `ebook/jump_to_chapter`
+#### `ebook__jump_to_chapter`
 
 Jump to a specific chapter by `chapterId` (from the EPUB flow entry).
 
@@ -273,7 +273,7 @@ Jump to a specific chapter by `chapterId` (from the EPUB flow entry).
 }
 ```
 
-#### `ebook/get_position`
+#### `ebook__get_position`
 
 Get current reading position and progress statistics.
 
@@ -289,7 +289,7 @@ Get current reading position and progress statistics.
 }
 ```
 
-#### `ebook/search`
+#### `ebook__search`
 
 Search across all chapters for text, with optional context words.
 
@@ -322,7 +322,7 @@ Search across all chapters for text, with optional context words.
 }
 ```
 
-#### `ebook/get_toc`
+#### `ebook__get_toc`
 
 Get hierarchical table of contents.
 
@@ -354,7 +354,7 @@ Get hierarchical table of contents.
 }
 ```
 
-#### `ebook/get_metadata`
+#### `ebook__get_metadata`
 
 Get complete EPUB metadata.
 
@@ -375,7 +375,7 @@ Get complete EPUB metadata.
 }
 ```
 
-#### `ebook/get_footnote`
+#### `ebook__get_footnote`
 
 Resolve a footnote reference by ID.
 
@@ -397,7 +397,7 @@ Resolve a footnote reference by ID.
 }
 ```
 
-#### `ebook/get_chapter_summary`
+#### `ebook__get_chapter_summary`
 
 Get a summary of the current chapter using key sentence extraction.
 
@@ -439,17 +439,17 @@ mcp-epub-reader/
 │   │   ├── tool-registration.ts # Tool registration and routing
 │   │   └── types.ts           # Server-side types
 │   ├── tools/                  # All 13 tool implementations
-│   │   ├── open.ts            # ebook/open tool
-│   │   ├── close.ts           # ebook/close tool
-│   │   ├── list-books.ts      # ebook/list_open_books tool
+│   │   ├── open.ts            # ebook__open tool
+│   │   ├── close.ts           # ebook__close tool
+│   │   ├── list-books.ts      # ebook__list_open_books tool
 │   │   ├── navigate.ts        # Navigation tools (next/previous)
 │   │   ├── jump.ts            # Jump tools (page/chapter)
-│   │   ├── position.ts        # ebook/get_position tool
-│   │   ├── search.ts          # ebook/search tool
-│   │   ├── toc.ts             # ebook/get_toc tool
-│   │   ├── metadata.ts        # ebook/get_metadata tool
-│   │   ├── footnote.ts        # ebook/get_footnote tool
-│   │   └── summary.ts         # ebook/get_chapter_summary tool
+│   │   ├── position.ts        # ebook__get_position tool
+│   │   ├── search.ts          # ebook__search tool
+│   │   ├── toc.ts             # ebook__get_toc tool
+│   │   ├── metadata.ts        # ebook__get_metadata tool
+│   │   ├── footnote.ts        # ebook__get_footnote tool
+│   │   └── summary.ts         # ebook__get_chapter_summary tool
 │   └── utils/                  # Shared utilities
 │       └── validation.ts      # Zod schemas and input validation
 ├── tests/                      # Test suites
@@ -504,7 +504,7 @@ export async function handleExampleTool(
 
 export function createExampleTool(bookManager: BookManager) {
   return {
-    name: 'ebook/example' as const,
+    name: 'ebook__example' as const,
     handler: (input: ExampleToolInput) => handleExampleTool(input, bookManager),
   };
 }
@@ -526,7 +526,7 @@ import { createExampleTool } from '../tools/example';
 
 const toolFactories = {
   // ... existing tools
-  'ebook/example': createExampleTool,
+  'ebook__example': createExampleTool,
 };
 ```
 

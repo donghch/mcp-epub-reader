@@ -1,5 +1,5 @@
 /**
- * ebook/get_footnote – Retrieve a footnote by its ID
+ * ebook__get_footnote – Retrieve a footnote by its ID
  * 
  * This tool resolves a footnote reference by ID or marker and returns the footnote content.
  * It handles both inline and endnote style footnotes.
@@ -24,7 +24,7 @@ export class FootnoteNotFoundError extends Error {
 }
 
 /**
- * Handle the ebook/get_footnote tool request.
+ * Handle the ebook__get_footnote tool request.
  * 
  * @param input - Validated input containing sessionId and footnoteId
  * @param bookManager - BookManager instance for session lifecycle
@@ -57,14 +57,14 @@ export async function handleGetFootnote(
 }
 
 /**
- * Factory function to create an MCP tool for ebook/get_footnote with dependency injection.
+ * Factory function to create an MCP tool for ebook__get_footnote with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createFootnoteTool(bookManager: BookManager) {
   return {
-    name: 'ebook/get_footnote' as const,
+    name: 'ebook__get_footnote' as const,
     handler: (input: unknown) => handleGetFootnote(input as GetFootnoteInput, bookManager),
   };
 }

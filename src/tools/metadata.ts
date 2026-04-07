@@ -1,5 +1,5 @@
 /**
- * ebook/get_metadata – Get book metadata
+ * ebook__get_metadata – Get book metadata
  * 
  * This tool retrieves the metadata for an open book session, including
  * title, author, publisher, language, publication date, description,
@@ -11,7 +11,7 @@ import { GetMetadataInput, GetMetadataOutput } from '../server/types';
 import { SessionNotFoundError } from '../server/book-manager';
 
 /**
- * Handle the ebook/get_metadata tool request.
+ * Handle the ebook__get_metadata tool request.
  * 
  * @param input - Validated input containing sessionId
  * @param bookManager - BookManager instance for session lifecycle
@@ -36,14 +36,14 @@ export async function handleGetMetadata(
 }
 
 /**
- * Factory function to create an MCP tool for ebook/get_metadata with dependency injection.
+ * Factory function to create an MCP tool for ebook__get_metadata with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createGetMetadataTool(bookManager: BookManager) {
   return {
-    name: 'ebook/get_metadata' as const,
+    name: 'ebook__get_metadata' as const,
     handler: (input: unknown) => handleGetMetadata(input as GetMetadataInput, bookManager),
   };
 }

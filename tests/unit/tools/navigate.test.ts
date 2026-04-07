@@ -1,5 +1,5 @@
 /**
- * Unit tests for ebook/navigate_next and ebook/navigate_previous tools
+ * Unit tests for ebook__navigate_next and ebook__navigate_previous tools
  */
 
 import { handleNavigateNext, handleNavigatePrevious } from '../../../src/tools/navigate';
@@ -55,7 +55,7 @@ const createMockPaginatedChapters = (): Chapter[] => [
   },
 ];
 
-describe('ebook/navigate_next', () => {
+describe('ebook__navigate_next', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -187,7 +187,7 @@ describe('ebook/navigate_next', () => {
   });
 });
 
-describe('ebook/navigate_previous', () => {
+describe('ebook__navigate_previous', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

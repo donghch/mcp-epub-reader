@@ -1,5 +1,5 @@
 /**
- * ebook/close – Close an open book session and release its resources
+ * ebook__close – Close an open book session and release its resources
  * 
  * This tool validates the session ID, removes the session from the book manager,
  * and releases any associated resources (parsed EPUB, paginated chapters, etc.).
@@ -11,7 +11,7 @@ import { CloseBookInput, CloseBookOutput } from '../server/types';
 import { SessionNotFoundError } from '../server/book-manager';
 
 /**
- * Handle the ebook/close tool request.
+ * Handle the ebook__close tool request.
  * 
  * @param input - Validated input containing sessionId
  * @param bookManager - BookManager instance for session lifecycle
@@ -38,14 +38,14 @@ export async function handleCloseBook(
 }
 
 /**
- * Factory function to create an MCP tool for ebook/close with dependency injection.
+ * Factory function to create an MCP tool for ebook__close with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createCloseTool(bookManager: BookManager) {
   return {
-    name: 'ebook/close' as const,
+    name: 'ebook__close' as const,
     handler: (input: unknown) => handleCloseBook(input as CloseBookInput, bookManager),
   };
 }

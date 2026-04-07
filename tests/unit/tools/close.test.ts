@@ -1,5 +1,5 @@
 /**
- * Unit tests for ebook/close tool.
+ * Unit tests for ebook__close tool.
  * 
  * Follows AAA (Arrange‑Act‑Assert) pattern and tests:
  * - Successful session closure with valid sessionId
@@ -13,7 +13,7 @@ import { BookManager } from '../../../src/server/book-manager';
 import { CloseBookInput, CloseBookOutput } from '../../../src/server/types';
 import { SessionNotFoundError } from '../../../src/server/book-manager';
 
-describe('ebook/close tool', () => {
+describe('ebook__close tool', () => {
   let mockBookManager: jest.Mocked<BookManager>;
   const mockSessionId = 'session-123';
   
@@ -85,7 +85,7 @@ describe('ebook/close tool', () => {
       const tool = createCloseTool(mockBookManager);
       
       // Assert
-      expect(tool.name).toBe('ebook/close');
+      expect(tool.name).toBe('ebook__close');
       expect(typeof tool.handler).toBe('function');
     });
     

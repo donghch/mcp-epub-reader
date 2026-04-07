@@ -1,5 +1,5 @@
 /**
- * ebook/get_position – Get current reading position details
+ * ebook__get_position – Get current reading position details
  * 
  * This tool returns the current reading position within a book session,
  * including current chapter, page number, total pages, percentage through book,
@@ -13,7 +13,7 @@ import { Chapter } from '../epub/types';
 import { validateInput, GetPositionInputSchema } from '../utils/validation';
 
 /**
- * Handle the ebook/get_position tool request.
+ * Handle the ebook__get_position tool request.
  * 
  * @param input - Validated input containing sessionId
  * @param bookManager - BookManager instance for session lifecycle
@@ -66,14 +66,14 @@ export async function handleGetPosition(
 }
 
 /**
- * Factory function to create an MCP tool for ebook/get_position with dependency injection.
+ * Factory function to create an MCP tool for ebook__get_position with dependency injection.
  * 
  * @param bookManager - BookManager instance to be used by the tool
  * @returns Tool object with name and handler suitable for MCP server registration
  */
 export function createGetPositionTool(bookManager: BookManager) {
   return {
-    name: 'ebook/get_position' as const,
+    name: 'ebook__get_position' as const,
     handler: (input: unknown) => handleGetPosition(input as GetPositionInput, bookManager),
   };
 }

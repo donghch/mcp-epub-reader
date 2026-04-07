@@ -1,5 +1,5 @@
 /**
- * Unit tests for ebook/search tool.
+ * Unit tests for ebook__search tool.
  * 
  * Follows AAA (Arrange‑Act‑Assert) pattern and tests:
  * - Successful search with matches across chapters
@@ -20,7 +20,7 @@ import { BookSession } from '../../../src/server/types';
 import { Chapter } from '../../../src/epub/types';
 import { BookMetadata } from '../../../src/epub/types';
 
-describe('ebook/search tool', () => {
+describe('ebook__search tool', () => {
   let mockBookManager: jest.Mocked<BookManager>;
   const mockSessionId = 'session-123';
   
@@ -333,7 +333,7 @@ describe('ebook/search tool', () => {
       const tool = createSearchTool(mockBookManager);
       
       // Assert
-      expect(tool.name).toBe('ebook/search');
+      expect(tool.name).toBe('ebook__search');
       expect(typeof tool.handler).toBe('function');
     });
 

@@ -1,5 +1,5 @@
 /**
- * Unit tests for ebook/list_open_books tool.
+ * Unit tests for ebook__list_open_books tool.
  * 
  * Follows AAA (Arrange‑Act‑Assert) pattern and tests:
  * - Returns array of open book sessions with bookId and basic metadata
@@ -13,7 +13,7 @@ import { BookManager } from '../../../src/server/book-manager';
 import { ListOpenBooksInput, ListOpenBooksOutput, BookSession } from '../../../src/server/types';
 import { BookMetadata } from '../../../src/epub/types';
 
-describe('ebook/list_open_books tool', () => {
+describe('ebook__list_open_books tool', () => {
   let mockBookManager: jest.Mocked<BookManager>;
   
   // Helper to create a consistent mock book session
@@ -124,7 +124,7 @@ describe('ebook/list_open_books tool', () => {
       const tool = createListOpenBooksTool(mockBookManager);
       
       // Assert
-      expect(tool.name).toBe('ebook/list_open_books');
+      expect(tool.name).toBe('ebook__list_open_books');
       expect(typeof tool.handler).toBe('function');
     });
     

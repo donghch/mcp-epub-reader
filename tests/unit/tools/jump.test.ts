@@ -1,5 +1,5 @@
 /**
- * Unit tests for ebook/jump_to_page and ebook/jump_to_chapter tools
+ * Unit tests for ebook__jump_to_page and ebook__jump_to_chapter tools
  * 
  * Follows AAA (Arrange‑Act‑Assert) pattern and tests:
  * - Successful jumps to valid page numbers and chapter IDs
@@ -76,7 +76,7 @@ const createMockPaginatedChapters = (): Chapter[] => [
   },
 ];
 
-describe('ebook/jump_to_page', () => {
+describe('ebook__jump_to_page', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -280,7 +280,7 @@ describe('ebook/jump_to_page', () => {
   });
 });
 
-describe('ebook/jump_to_chapter', () => {
+describe('ebook__jump_to_chapter', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -476,7 +476,7 @@ describe('factory functions', () => {
     const tool = createJumpToPageTool(mockBookManager);
 
     // Assert
-    expect(tool.name).toBe('ebook/jump_to_page');
+    expect(tool.name).toBe('ebook__jump_to_page');
     expect(typeof tool.handler).toBe('function');
   });
 
@@ -485,7 +485,7 @@ describe('factory functions', () => {
     const tool = createJumpToChapterTool(mockBookManager);
 
     // Assert
-    expect(tool.name).toBe('ebook/jump_to_chapter');
+    expect(tool.name).toBe('ebook__jump_to_chapter');
     expect(typeof tool.handler).toBe('function');
   });
 

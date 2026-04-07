@@ -1,5 +1,5 @@
 /**
- * Unit tests for ebook/open tool.
+ * Unit tests for ebook__open tool.
  * 
  * Follows AAA (Arrange‑Act‑Assert) pattern and tests:
  * - Successful book opening with valid file path
@@ -15,7 +15,7 @@ import { BookManagerError, FileAccessError } from '../../../src/server/book-mana
 import { BookSession } from '../../../src/server/types';
 import { BookMetadata } from '../../../src/epub/types';
 
-describe('ebook/open tool', () => {
+describe('ebook__open tool', () => {
   let mockBookManager: jest.Mocked<BookManager>;
   const mockFilePath = '/path/to/book.epub';
   
@@ -139,7 +139,7 @@ describe('ebook/open tool', () => {
       const tool = createOpenTool(mockBookManager);
       
       // Assert
-      expect(tool.name).toBe('ebook/open');
+      expect(tool.name).toBe('ebook__open');
       expect(typeof tool.handler).toBe('function');
     });
     

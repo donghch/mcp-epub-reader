@@ -1,5 +1,5 @@
 /**
- * Unit tests for ebook/get_chapter_summary tool.
+ * Unit tests for ebook__get_chapter_summary tool.
  * 
  * Follows AAA (Arrange‑Act‑Assert) pattern and tests:
  * - Successful summary generation with key sentences
@@ -20,7 +20,7 @@ import { BookSession } from '../../../src/server/types';
 import { Chapter } from '../../../src/epub/types';
 import { BookMetadata } from '../../../src/epub/types';
 
-describe('ebook/get_chapter_summary tool', () => {
+describe('ebook__get_chapter_summary tool', () => {
   let mockBookManager: jest.Mocked<BookManager>;
   const mockSessionId = 'session-123';
   
@@ -311,7 +311,7 @@ describe('ebook/get_chapter_summary tool', () => {
       const tool = createGetChapterSummaryTool(mockBookManager);
       
       // Assert
-      expect(tool.name).toBe('ebook/get_chapter_summary');
+      expect(tool.name).toBe('ebook__get_chapter_summary');
       expect(typeof tool.handler).toBe('function');
     });
     

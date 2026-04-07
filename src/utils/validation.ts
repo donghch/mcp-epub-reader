@@ -73,7 +73,7 @@ export const NonNegativeIntSchema = z.number({
 // ============================================================================
 
 /**
- * 1. ebook/open – Open an EPUB file
+ * 1. ebook__open – Open an EPUB file
  */
 export const OpenBookInputSchema = z.object({
   filePath: FilePathSchema,
@@ -81,19 +81,19 @@ export const OpenBookInputSchema = z.object({
 }).strict();
 
 /**
- * 2. ebook/close – Close an open book session
+ * 2. ebook__close – Close an open book session
  */
 export const CloseBookInputSchema = z.object({
   sessionId: SessionIdSchema,
 }).strict();
 
 /**
- * 3. ebook/list_open_books – List currently open books
+ * 3. ebook__list_open_books – List currently open books
  */
 export const ListOpenBooksInputSchema = z.object({}).strict(); // Record<string, never>
 
 /**
- * 4. ebook/navigate_next – Go to next page
+ * 4. ebook__navigate_next – Go to next page
  */
 export const NavigateNextInputSchema = z.object({
   sessionId: SessionIdSchema,
@@ -101,12 +101,12 @@ export const NavigateNextInputSchema = z.object({
 }).strict();
 
 /**
- * 5. ebook/navigate_previous – Go to previous page
+ * 5. ebook__navigate_previous – Go to previous page
  */
 export const NavigatePreviousInputSchema = NavigateNextInputSchema; // same structure
 
 /**
- * 6. ebook/jump_to_page – Jump to specific page number
+ * 6. ebook__jump_to_page – Jump to specific page number
  */
 export const JumpToPageInputSchema = z.object({
   sessionId: SessionIdSchema,
@@ -114,7 +114,7 @@ export const JumpToPageInputSchema = z.object({
 }).strict();
 
 /**
- * 7. ebook/jump_to_chapter – Jump to specific chapter
+ * 7. ebook__jump_to_chapter – Jump to specific chapter
  */
 export const JumpToChapterInputSchema = z.object({
   sessionId: SessionIdSchema,
@@ -125,14 +125,14 @@ export const JumpToChapterInputSchema = z.object({
 }).strict();
 
 /**
- * 8. ebook/get_position – Get current reading position
+ * 8. ebook__get_position – Get current reading position
  */
 export const GetPositionInputSchema = z.object({
   sessionId: SessionIdSchema,
 }).strict();
 
 /**
- * 9. ebook/search – Search within the book
+ * 9. ebook__search – Search within the book
  */
 export const SearchInputSchema = z.object({
   sessionId: SessionIdSchema,
@@ -146,21 +146,21 @@ export const SearchInputSchema = z.object({
 }).strict();
 
 /**
- * 10. ebook/get_toc – Get table of contents
+ * 10. ebook__get_toc – Get table of contents
  */
 export const GetTocInputSchema = z.object({
   sessionId: SessionIdSchema,
 }).strict();
 
 /**
- * 11. ebook/get_metadata – Get book metadata
+ * 11. ebook__get_metadata – Get book metadata
  */
 export const GetMetadataInputSchema = z.object({
   sessionId: SessionIdSchema,
 }).strict();
 
 /**
- * 12. ebook/get_footnote – Get footnote by ID
+ * 12. ebook__get_footnote – Get footnote by ID
  */
 export const GetFootnoteInputSchema = z.object({
   sessionId: SessionIdSchema,
@@ -171,7 +171,7 @@ export const GetFootnoteInputSchema = z.object({
 }).strict();
 
 /**
- * 13. ebook/get_chapter_summary – Get summary of a chapter
+ * 13. ebook__get_chapter_summary – Get summary of a chapter
  */
 export const GetChapterSummaryInputSchema = z.object({
   sessionId: SessionIdSchema,
@@ -227,19 +227,19 @@ export function validateInput<T>(
 // ============================================================================
 
 export const ToolInputSchemas = {
-  'ebook/open': OpenBookInputSchema,
-  'ebook/close': CloseBookInputSchema,
-  'ebook/list_open_books': ListOpenBooksInputSchema,
-  'ebook/navigate_next': NavigateNextInputSchema,
-  'ebook/navigate_previous': NavigatePreviousInputSchema,
-  'ebook/jump_to_page': JumpToPageInputSchema,
-  'ebook/jump_to_chapter': JumpToChapterInputSchema,
-  'ebook/get_position': GetPositionInputSchema,
-  'ebook/search': SearchInputSchema,
-  'ebook/get_toc': GetTocInputSchema,
-  'ebook/get_metadata': GetMetadataInputSchema,
-  'ebook/get_footnote': GetFootnoteInputSchema,
-  'ebook/get_chapter_summary': GetChapterSummaryInputSchema,
+  'ebook__open': OpenBookInputSchema,
+  'ebook__close': CloseBookInputSchema,
+  'ebook__list_open_books': ListOpenBooksInputSchema,
+  'ebook__navigate_next': NavigateNextInputSchema,
+  'ebook__navigate_previous': NavigatePreviousInputSchema,
+  'ebook__jump_to_page': JumpToPageInputSchema,
+  'ebook__jump_to_chapter': JumpToChapterInputSchema,
+  'ebook__get_position': GetPositionInputSchema,
+  'ebook__search': SearchInputSchema,
+  'ebook__get_toc': GetTocInputSchema,
+  'ebook__get_metadata': GetMetadataInputSchema,
+  'ebook__get_footnote': GetFootnoteInputSchema,
+  'ebook__get_chapter_summary': GetChapterSummaryInputSchema,
 } as const;
 
 export type ToolName = keyof typeof ToolInputSchemas;
@@ -247,7 +247,7 @@ export type ToolName = keyof typeof ToolInputSchemas;
 /**
  * Validate input for a specific tool.
  * 
- * @param tool - Tool name (e. g., 'ebook/open')
+ * @param tool - Tool name (e. g., 'ebook__open')
  * @param input - Unknown input data
  * @returns ValidationResult for that tool's input schema
  */
